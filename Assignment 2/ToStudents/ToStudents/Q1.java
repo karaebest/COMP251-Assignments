@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class A2_Q1 {
+public class Q1 {
 	public static int[] last = new int[2];
 	public static int initialNumOfBalls = 0;
 
@@ -23,23 +23,23 @@ public class A2_Q1 {
 		return balls;
 	}
 
-	public static ArrayList<int[]> jumps(int[] pos, HashSet<int[]> inPlay, HashSet<int[]> fixed){ //returns list of adjacent balls to ball pos that can be jumped over
+	public static ArrayList<int[]> jumps(int[] pos, HashSet<int[]> balls){ //returns list of adjacent balls to ball pos that can be jumped over
 
 		ArrayList<int[]> jump = new ArrayList<>();
 		int i = pos[0];
 		int j = pos[1];
 
 
-		if(i+2<5 && (!((i+2==4) && (j<3 || j>5))) && (inPlay.contains(new int[] {i+1, j}) || fixed.contains(new int[] {i+1, j}))){ //space above
+		if(i+2<5 && (!((i+2==4) && (j<3 || j>5))) && balls.contains(new int[] {i+1, j})){ //space above
 			jump.add(new int[] {i+1, j});
 		}
-		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && (inPlay.contains(new int[] {i-1, j}) || fixed.contains(new int[] {i-1, j}))){ //space below
+		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && balls.contains(new int[] {i-1, j})){ //space below
 			jump.add(new int[] {i-1, j});
 		}
-		if(j+2<9 && (!((i==0 || i==4) && (j+2<3 || j+2>5))) && (inPlay.contains(new int[] {i, j+1}) || fixed.contains(new int[] {i, j+1}))){ //space right
+		if(j+2<9 && (!((i==0 || i==4) && (j+2<3 || j+2>5))) && balls.contains(new int[] {i, j+1})){ //space right
 			jump.add(new int[] {i, j+1});
 		}
-		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && (inPlay.contains(new int[] {i-1, j}) || fixed.contains(new int[] {i-1, j}))){ //space left
+		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && balls.contains(new int[] {i-1, j})){ //space left
 			jump.add(new int[] {i, j-1});
 		}
 
@@ -93,7 +93,7 @@ public class A2_Q1 {
 	}
 
 
-	public static void moveBall(HashSet<int[]> inPlay, HashSet<int[]> fixed, int[] sol, int[] toDelete, int[] oldPos){
+	public static void moveBall(HashSet<int[]> balls, int[] sol, int[] toDelete, int[] oldPos){
 
 		int[] newPos = new int[2];
 		
@@ -139,13 +139,12 @@ public class A2_Q1 {
 	}
 	
 	public static int[] game(String[][] board){
-
-		HashSet<int[]> fixed = new HashSet<>();
 		
-		moveBall(positions(board), fixed, new int[2], null, null);
+		moveBall(positions(board), new int[2], null, null);
 		A2_Q1.last[1] = A2_Q1.initialNumOfBalls-A2_Q1.last[0];
 
 		return A2_Q1.last;
 	}
 
 }
+
