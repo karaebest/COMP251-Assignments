@@ -6,15 +6,14 @@ public class Q1 {
 	public static int[] opt = new int[2];
 	public static int initialNumOfBalls = 0;
 
-	public static HashSet<int[]> positions(String[][] board){ //to insert initial ball positions into hashset
+	public static HashSet<int[]> positions(String[][] board){ //to insert initial ball positions into ArrayList
 
 		HashSet<int[]> balls = new HashSet<>();
 
 
 		int i=0;
-
 		while(i<board.length){
-			for(int j=(i==0 || i==4)?3:0; j<((i==0 || i==4)?6:9); j++){
+			for(int j=0; j<9; j++){
 				if(board[i][j].equals("o")){
 					balls.add(new int[] {i,j});
 				}
@@ -26,27 +25,27 @@ public class Q1 {
 		return balls;
 	}
 
-	public static ArrayList<int[]> jumps(int[] pos, HashSet<int[]> balls){ //returns list of adjacent balls to ball pos that can be jumped over
+	public static HashSet<int[]> jumps(int[] pos, HashSet<int[]> balls){ //returns list of adjacent balls to ball pos that can be newPosT over
 
-		ArrayList<int[]> jump = new ArrayList<>();
+		HashSet<int[]> jump = new HashSet<>();
 		int i = pos[0];
 		int j = pos[1];
-		
+		HashSet<int[]> temp = new HashSet<>();
+		temp.addAll(balls);
 
-
-		if(i+2<5 && (!((i+2==4) && (j<3 || j>5))) && balls.contains(new int[] {i+1, j})){ //space above
-			jump.add(new int[] {i+1, j});
+		System.out.println("TEST:"+!temp.add(new int[] {i+1,j}));
+		if(i+2<5 && (!((i+2==4) && (j<3 || j>5))) && !temp.add(new int[] {i+1,j})){ //space above
+			jump.add(new int[] {i+1,j});
 		}
-		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && balls.contains(new int[] {i-1, j})){ //space below
-			jump.add(new int[] {i-1, j});
+		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && !temp.add(new int[] {i-1,j})){ //space below
+			jump.add(new int[] {i-1,j});
 		}
-		if(j+2<9 && (!((i==0 || i==4) && j+2>5)) && balls.contains(new int[] {i, j+1})){ //space right
-			jump.add(new int[] {i, j+1});
+		if(j+2<9 && (!((i==0 || i==4) && j+2>5)) && !temp.add(new int[] {i,j+1})){ //space right
+			jump.add(new int[] {i,j+1});
 		}
-		if(j-2>=0 && (!((i==0 || i==4) && j-2<3)) && balls.contains(new int[] {i, j-1})){ //space left
-			jump.add(new int[] {i, j-1});
+		if(j-2>=0 && (!((i==0 || i==4) && j-2<3)) && !temp.add(new int[] {i,j-1})){ //space left
+			jump.add(new int[] {i,j-1});
 		}
-
 
 		return jump;
 		
@@ -54,14 +53,10 @@ public class Q1 {
 
 	
 
-	public static void moveBall(HashSet<int[]> balls, int minB, int[] toDelete, int[] oldPos){
-
-		int[] newPos = new int[2];
+	public static void moveBall(HashSet<int[]> balls, int minB, int[] newPos, int[] toDelete, int[] oldPos){
 		
 		if(oldPos[0]!=-1){ 
-			newPos[0] = (toDelete[0]-oldPos[0]==0)?toDelete[0]:(2*toDelete[0]-oldPos[0]);
-			newPos[1] = (toDelete[1]-oldPos[1]==0)?toDelete[1]:(2*toDelete[1]-oldPos[1]);
-			//delete jumped over, change index of moved ball
+			//delete newPosT over, change index of moved ball
 			balls.remove(toDelete);
 			balls.remove(oldPos);
 			balls.add(newPos);
@@ -78,7 +73,7 @@ public class Q1 {
 
 		while(b.hasNext()){ //iterate through balls
 			int[] temp = b.next();
-			ArrayList<int[]> jumps = jumps(temp, balls);
+			HashSet<int[]> jumps = jumps(temp, balls);
 			if(jumps.isEmpty()){
 				j++;
 				continue;
@@ -86,8 +81,17 @@ public class Q1 {
 
 			Iterator<int[]> jp = jumps.iterator();
 			while(jp.hasNext()){ //iterate through ball[i] jumps
-				int[] jpTemp = jp.next();
-				moveBall(balls, minB-1, jpTemp, temp);
+				int[] jpTemp = jp.next(); //ball to delete
+				
+				int[] newPosT = temp; 
+				if(jpTemp[0]!=temp[0]){
+					newPosT[0] = (jpTemp[0]<temp[0])?newPosT[0]-2:newPosT[0]+2;
+				}else{
+					newPosT[1] = (jpTemp[1]<temp[1])?newPosT[1]-2:newPosT[1]+2;
+				}
+				HashSet<int[]> newBalls = new HashSet<>();
+				newBalls.addAll(balls);
+				moveBall(balls, minB-1, jpTemp, newPosT, temp);
 			}
 		}
 
@@ -102,7 +106,7 @@ public class Q1 {
 
 		HashSet<int[]> balls = positions(board);
 		int[] temp = new int[] {-1,-1};
-		moveBall(balls, positions(board).size(), temp, temp); 
+		moveBall(balls, balls.size(), temp, temp, temp); 
 		Q1.opt[1] = Q1.initialNumOfBalls-Q1.opt[0];
 
 		return Q1.opt;
