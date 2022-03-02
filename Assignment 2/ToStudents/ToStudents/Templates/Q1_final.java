@@ -2,7 +2,7 @@ package Templates;
 
 import java.util.*;
 
-//to try: use array instead of ArrayList, try .remove() on iterators
+//to try: use array instead of ArrayList, try .remove() on iterators, has to do with copies being passed as args to moveBall
 
 public class Q1_final {
 	public static int[] opt = new int[2];
