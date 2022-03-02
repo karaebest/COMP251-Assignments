@@ -47,15 +47,9 @@ public class Q1_final {
 
 	
 
-	public static void moveBall(ArrayList<int[]> oldBalls, int[] toDelete, int[] oldPos, String[][] board){
+	public static void moveBall(ArrayList<int[]> oldBalls, int[] newPos, int[] toDelete, int[] oldPos, String[][] board){
 		ArrayList<int[]> balls = new ArrayList<>();
 		if(oldPos[0]!=-1){  
-			int[] newPos = oldPos;
-			if(toDelete[0]!=oldPos[0]){
-				newPos[0] = (toDelete[0]<oldPos[0])?newPos[0]-2:newPos[0]+2;
-			}else{
-				newPos[1] = (toDelete[1]<oldPos[1])?newPos[1]-2:newPos[1]+2;
-			}
             System.out.println("Before:"+oldBalls.size());
             balls = positions(oldBalls, newPos, toDelete, oldPos);
             System.out.println("After:"+balls.size());
@@ -85,7 +79,13 @@ public class Q1_final {
 			Iterator<int[]> jp = jumps.iterator();
 			while(jp.hasNext()){ //iterate through balls to jumps
 				int[] jpTemp = jp.next(); //ball to delete
-                moveBall(balls, jpTemp, temp, board);
+                int[] nP = temp;
+			    if(jpTemp[0]!=temp[0]){ //newPos
+				    nP[0] = (jpTemp[0]<temp[0])?nP[0]-2:nP[0]+2;
+			    }else{
+				    nP[1] = (jpTemp[1]<temp[1])?nP[1]-2:nP[1]+2;
+			    }
+                moveBall(balls, nP, jpTemp, temp, board);
 			}
 		}
 
@@ -113,7 +113,7 @@ public class Q1_final {
         Q1_final.opt[0] = balls.size();
         Q1_final.initialNumOfBalls = balls.size();
 		int[] temp = new int[] {-1,-1};
-		moveBall(balls, temp, temp, board); 
+		moveBall(balls, temp, temp, temp, board); 
 		Q1_final.opt[1] = Q1_final.initialNumOfBalls-Q1_final.opt[0];
 
 		return Q1_final.opt;
