@@ -1,3 +1,5 @@
+package Templates;
+
 import java.util.*;
 
 public class Q1 {
@@ -19,8 +21,8 @@ public class Q1 {
 			}
 			i++;
 		}
-		A2_Q1.opt[0] = balls.size();
-		A2_Q1.initialNumOfBalls = balls.size();
+		Q1.opt[0] = balls.size();
+		Q1.initialNumOfBalls = balls.size();
 		return balls;
 	}
 
@@ -67,7 +69,7 @@ public class Q1 {
 		}
 
 		if(minB==1){ //no better minB for the board
-			A2_Q1.opt[0] = minB;
+			Q1.opt[0] = minB;
 			return;
 		}
 		
@@ -90,7 +92,7 @@ public class Q1 {
 		}
 
 		if(j==balls.size()){
-			A2_Q1.opt[0] = opt[0]<=minB?opt[0]:minB;
+			Q1.opt[0] = opt[0]<=minB?opt[0]:minB;
 			return;
 		}
 	
@@ -101,9 +103,9 @@ public class Q1 {
 		HashSet<int[]> balls = positions(board);
 		int[] temp = new int[] {-1,-1};
 		moveBall(balls, positions(board).size(), temp, temp); 
-		A2_Q1.opt[1] = A2_Q1.initialNumOfBalls-A2_Q1.opt[0];
+		Q1.opt[1] = Q1.initialNumOfBalls-Q1.opt[0];
 
-		return A2_Q1.opt;
+		return Q1.opt;
 	}
 
 }
