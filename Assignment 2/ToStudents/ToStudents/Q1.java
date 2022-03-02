@@ -1,9 +1,8 @@
 import java.util.*;
 
 public class Q1 {
-	public static int[] last = new int[2];
+	public static int[] opt = new int[2];
 	public static int initialNumOfBalls = 0;
-	public static HashSet<int[]> nilSpaces;
 
 	public static HashSet<int[]> positions(String[][] board){ //to insert initial ball positions into hashset
 
@@ -13,14 +12,14 @@ public class Q1 {
 		int i=0;
 
 		while(i<board.length){
-			for(int j=(i==0 || i==4)?3:0; j<((i==0 || i==4)?6:8); j++){
+			for(int j=(i==0 || i==4)?3:0; j<((i==0 || i==4)?6:9); j++){
 				if(board[i][j].equals("o")){
 					balls.add(new int[] {i,j});
 				}
 			}
 			i++;
 		}
-		A2_Q1.last[0] = balls.size();
+		A2_Q1.opt[0] = balls.size();
 		A2_Q1.initialNumOfBalls = balls.size();
 		return balls;
 	}
@@ -39,10 +38,10 @@ public class Q1 {
 		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && balls.contains(new int[] {i-1, j})){ //space below
 			jump.add(new int[] {i-1, j});
 		}
-		if(j+2<9 && (!((i==0 || i==4) && (j+2<3 || j+2>5))) && balls.contains(new int[] {i, j+1})){ //space right
+		if(j+2<9 && (!((i==0 || i==4) && j+2>5)) && balls.contains(new int[] {i, j+1})){ //space right
 			jump.add(new int[] {i, j+1});
 		}
-		if(i-2>=0 && (!((i-2==0) && (j<3 || j>5))) && balls.contains(new int[] {i-1, j})){ //space left
+		if(j-2>=0 && (!((i==0 || i==4) && j-2<3)) && balls.contains(new int[] {i, j-1})){ //space left
 			jump.add(new int[] {i, j-1});
 		}
 
@@ -53,11 +52,11 @@ public class Q1 {
 
 	
 
-	public static void moveBall(HashSet<int[]> balls, int[] sol, int[] toDelete, int[] oldPos){
+	public static void moveBall(HashSet<int[]> balls, int minB, int[] toDelete, int[] oldPos){
 
 		int[] newPos = new int[2];
 		
-		if(oldPos!=null){ 
+		if(oldPos[0]!=-1){ 
 			newPos[0] = (toDelete[0]-oldPos[0]==0)?toDelete[0]:(2*toDelete[0]-oldPos[0]);
 			newPos[1] = (toDelete[1]-oldPos[1]==0)?toDelete[1]:(2*toDelete[1]-oldPos[1]);
 			//delete jumped over, change index of moved ball
@@ -67,38 +66,44 @@ public class Q1 {
 			
 		}
 
-		sol[0] = balls.size(); 
-		if(sol[0]==1){ //no better solution for the board
-			A2_Q1.last = sol;
+		if(minB==1){ //no better minB for the board
+			A2_Q1.opt[0] = minB;
 			return;
 		}
 		
-		Iterator b = balls.iterator();
-		int j = 1;
+		Iterator<int[]> b = balls.iterator();
+		int j = 0;
 
 		while(b.hasNext()){ //iterate through balls
 			int[] temp = b.next();
 			ArrayList<int[]> jumps = jumps(temp, balls);
-			j = jumps.isEmpty()?j+1:j;
+			if(jumps.isEmpty()){
+				j++;
+				continue;
+			}
 
-			Iterator jp = jumps.iterator();
+			Iterator<int[]> jp = jumps.iterator();
 			while(jp.hasNext()){ //iterate through ball[i] jumps
-				moveBall(balls, sol, jp.next(), temp);
+				int[] jpTemp = jp.next();
+				moveBall(balls, minB-1, jpTemp, temp);
 			}
 		}
 
 		if(j==balls.size()){
-			A2_Q1.last = last[0]<=sol[0]?last:sol;
+			A2_Q1.opt[0] = opt[0]<=minB?opt[0]:minB;
+			return;
 		}
 	
 	}
 	
 	public static int[] game(String[][] board){
-		
-		moveBall(positions(board), new int[2], null, null);
-		A2_Q1.last[1] = A2_Q1.initialNumOfBalls-A2_Q1.last[0];
 
-		return A2_Q1.last;
+		HashSet<int[]> balls = positions(board);
+		int[] temp = new int[] {-1,-1};
+		moveBall(balls, positions(board).size(), temp, temp); 
+		A2_Q1.opt[1] = A2_Q1.initialNumOfBalls-A2_Q1.opt[0];
+
+		return A2_Q1.opt;
 	}
 
 }
