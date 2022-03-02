@@ -2,6 +2,8 @@ package Templates;
 
 import java.util.*;
 
+//to try: use array instead of ArrayList, try .remove() on iterators
+
 public class Q1_final {
 	public static int[] opt = new int[2];
 	public static int initialNumOfBalls = 0;
