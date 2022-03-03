@@ -5,22 +5,22 @@ import java.util.*;
 //to try: use array instead of ArrayList, try .remove() on iterators, has to do with copies being passed as args to moveBall
 
 public class Q1_final {
-	public static int[] opt = new int[2];
-	public static int initialNumOfBalls = 0;
 
-	public static ArrayList<int[]> positions(ArrayList<int[]> oldBalls, int[] newPos, int[] tD, int[] oP){ //to insert initial ball positions into ArrayList
+	public static int[][] positions(int[][] oldBalls, int[] newPos, int[] tD, int[] oP){ //to insert initial ball positions into ArrayList
 
-		ArrayList<int[]> balls = new ArrayList<>();
+		int[][] balls = new int[33][2];
+		int b=0;
+		int[] p;
+		int k = 0;
 
-        Iterator<int[]> b = oldBalls.iterator();
-
-        while(b.hasNext()){
-            int[] p = b.next();
-            if((p[0]!=tD[0] || p[1]!=tD[1]) && (p[0]!=oP[0] || p[1]!=oP[1])){
-                balls.add(p);
+		while(!oldBalls[b].equals(new int[] {0,0})){
+			p = oldBalls[b];
+			if((!p.equals(tD)) && !p.equals(oP)){
+                balls[k++] = oldBalls[b];
             }
-        }
-		balls.add(newPos);
+			b++;
+		}
+		balls[k] = newPos;
 		return balls;
 	}
 
@@ -47,78 +47,68 @@ public class Q1_final {
 		
 	}
 
-	
+	public static int moveBall(int[][] oldBalls, int[] newPos, int[] toDelete, int[] oldPos, String[][] board, int minB){
+		int[][] balls;
+		
 
-	public static void moveBall(ArrayList<int[]> oldBalls, int[] newPos, int[] toDelete, int[] oldPos, String[][] board){
-		ArrayList<int[]> balls = new ArrayList<>();
 		if(oldPos[0]!=-1){  
-            System.out.println("Before:"+oldBalls.size());
             balls = positions(oldBalls, newPos, toDelete, oldPos);
-            System.out.println("After:"+balls.size());
             board[toDelete[0]][toDelete[1]] = ".";
 			board[oldPos[0]][oldPos[1]] = ".";
             board[newPos[0]][newPos[1]] = "o";
+			minB--;
 		}else{
-            balls.addAll(oldBalls);
+            balls = oldBalls;
         }
 
-        int minB = balls.size();
+		int opt = minB;
+
 		if(minB==1){ //no better minB for the board
-			Q1_final.opt[0] = minB;
-			return;
+			return minB;
 		}
 		
-		Iterator<int[]> b = balls.iterator();
-		int j = 0;
-		while(b.hasNext()){ //iterate through balls
-			int[] temp = b.next();
-			ArrayList<int[]> jumps = jumps(temp, board);
-			if(jumps.isEmpty()){
-				j++;
-				continue;
-			}
-
-			Iterator<int[]> jp = jumps.iterator();
-			while(jp.hasNext()){ //iterate through balls to jumps
-				int[] jpTemp = jp.next(); //ball to delete
-                int[] nP = temp;
-			    if(jpTemp[0]!=temp[0]){ //newPos
-				    nP[0] = (jpTemp[0]<temp[0])?nP[0]-2:nP[0]+2;
+		int b = 0;
+		
+		while(!balls[b].equals(new int[] {0,0})){
+			ArrayList<int[]> jumps = jumps(balls[b], board);
+			for(int i=0; i<jumps.size(); i++){
+				int[] tD = jumps.get(i);
+				int[] nP = balls[b];
+				if(tD[0]!=balls[b][0]){ //find newPos
+				    nP[0] = (tD[0]<balls[b][0])?nP[0]-2:nP[0]+2;
 			    }else{
-				    nP[1] = (jpTemp[1]<temp[1])?nP[1]-2:nP[1]+2;
+				    nP[1] = (tD[1]<balls[b][1])?nP[1]-2:nP[1]+2;
 			    }
-                moveBall(balls, nP, jpTemp, temp, board);
+				opt = moveBall(balls, nP, tD, balls[b], board, minB);
+				opt = opt<=minB?opt:minB;
+
 			}
+			b++;
 		}
-
-        if(j==minB){
-            Q1_final.opt[0] = opt[0]<=minB?opt[0]:minB;
-            return;
-        }
-
-		
+		return opt;
 	
 	}
 	
 	public static int[] game(String[][] board){
 
-		ArrayList<int[]> balls = new ArrayList<>();
+		int[][] balls = new int[33][2];
 		int i=0;
+		int b=0;
+		int[] opt = new int[2];
+
 		while(i<board.length){
 			for(int j=0; j<9; j++){
 				if(board[i][j].equals("o")){
-					balls.add(new int[] {i,j});
+					balls[b++] = new int[] {i,j};
 				}
 			}
 			i++;
 		}
-        Q1_final.opt[0] = balls.size();
-        Q1_final.initialNumOfBalls = balls.size();
 		int[] temp = new int[] {-1,-1};
-		moveBall(balls, temp, temp, temp, board); 
-		Q1_final.opt[1] = Q1_final.initialNumOfBalls-Q1_final.opt[0];
+		opt[0] = moveBall(balls, temp, temp, temp, board, b); 
+		opt[1] = b - opt[0];
 
-		return Q1_final.opt;
+		return opt;
 	}
 
 }
