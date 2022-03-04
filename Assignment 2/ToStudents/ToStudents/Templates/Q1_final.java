@@ -4,117 +4,114 @@ import java.util.*;
 
 public class Q1_final {
 
-	public static int[][] positions(int[][] oldBalls, int[] newPos, int[] tD, int[] oP){ //merge with main func, they run simultaneously
+	public static ArrayList<int[]> positions(ArrayList<int[]> oldBalls, int[] newPos, int[] tD, int[] oP){ //merge with main func, they run simultaneously
 
-		int[][] balls = new int[33][2];
-		int b=0;
-		int[] p;
-		int k = 0;
+		ArrayList<int[]> balls = new ArrayList<>();
 
-		while(!(oldBalls[b][0]==0 && oldBalls[b][1]==0)){
-			p = oldBalls[b];
-			System.out.println(p[0]+" "+p[1]);
-			if((!p.equals(tD)) && !p.equals(oP)){
-                balls[k++] = oldBalls[b].clone();
+		for(int[] b: oldBalls){
+			if((!b.equals(tD)) && !b.equals(oP)){
+				balls.add(b.clone());
             }
-			b++;
 		}
-		balls[k] = newPos.clone();
+		balls.add(newPos.clone());
 		return balls;
 	}
 
-	public static int[][] jumps(int[] pos, String[][] board){ //returns list of adjacent balls to ball pos that can be newPosT over
+	public static ArrayList<int[]> jumps(int[] pos, String[][] board){ //returns list of adjacent balls to ball pos that can be newPosT over
 
-		int[][] jump = new int[4][2];
+		ArrayList<int[]> jump = new ArrayList<>();
 		int i = pos[0];
 		int j = pos[1];
-		int k = 0;
+		int[] toAdd = new int[2];
 
 		if(i+2<5 && board[i+2][j].equals(".") && board[i+1][j].equals("o")){ //space above
-			jump[k][0] = i+1;
-			jump[k++][1] = j;
+			toAdd[0] = i+1;
+			toAdd[1] = j;
+			jump.add(toAdd.clone());
 		}
 		if(i-2>=0 && board[i-2][j].equals(".") && board[i-1][j].equals("o")){ //space below
-			jump[k][0] = i-1;
-			jump[k++][1] = j;
+			toAdd[0] = i-1;
+			toAdd[1] = j;
+			jump.add(toAdd.clone());
 		}
 		if(j+2<9 && board[i][j+2].equals(".") && board[i][j+1].equals("o")){ //space right
-			jump[k][0] = i;
-			jump[k++][1] = j+1;
+			toAdd[0] = i;
+			toAdd[1] = j+1;
+			jump.add(toAdd.clone());
 		}
 		if(j-2>=0 && board[i][j-2].equals(".") && board[i][j-1].equals("o")){ //space left
-			jump[k][0] = i;
-			jump[k][1] = j-1;
+			toAdd[0] = i;
+			toAdd[1] = j-1;
+			jump.add(toAdd.clone());
 		}
 
 		return jump;
 		
 	}
 
-	public static int moveBall(int[][] oldBalls, String[][] oldBoard, int minB, SortedSet<Integer> opt){
-
-		if(minB==1){ //no better minB for the board
-			return minB;
-		}
+	public static int moveBall(ArrayList<int[]> oldBalls, String[][] board, int minB){
 		
-		int b = 0;
-		int j;
+		SortedSet<Integer> sol = new TreeSet<>(); //add solutions into here, return min one
+		ArrayList<int[]> jump = new ArrayList<>();
+		ArrayList<int[]> balls = new ArrayList<>();
+		int add;
 		
-		while(!(oldBalls[b][0]==0 && oldBalls[b][1]==0)){
+		for(int[] b: oldBalls){
 
-			int[][] jump = jumps(oldBalls[b], oldBoard);
+			jump.clear();
+			jump.addAll(jumps(b, board));
 			
-			j = 0;
-			while(!(jump[j][0]==0 && jump[j][1]==0)){
+			for(int[] j: jump){
 
-				String[][] board = oldBoard.clone();
 				
-				int[] nP = oldBalls[b].clone();
-				if(jump[j][0]!=oldBalls[b][0]){ //find newPos
-					nP[0] = (jump[j][0]<oldBalls[b][0])?nP[0]-2:nP[0]+2;
+				int[] nP = b.clone();	//find newPos
+				if(j[0]!=b[0]){ 
+					nP[0] = (j[0]<b[0])?nP[0]-2:nP[0]+2;
 				}else{
-					nP[1] = (jump[j][1]<oldBalls[b][1])?nP[1]-2:nP[1]+2;
+					nP[1] = (j[1]<b[1])?nP[1]-2:nP[1]+2;
 				}
 
-				int[][] balls = positions(oldBalls, nP, jump[j], oldBalls[b]);
-				board[jump[j][0]][jump[j][1]] = ".";
-				board[oldBalls[b][0]][oldBalls[b][1]] = ".";
+				balls.clear();	//take step to new state
+				balls.addAll(positions(oldBalls, nP, j, b));
+
+				board[j[0]][j[1]] = ".";	
+				board[b[0]][b[1]] = ".";
 				board[nP[0]][nP[1]] = "o";
 
-				int add = moveBall(balls, board, minB-1, opt);
-				opt.add(add);
+				add = moveBall(balls, board, minB-1);	//recur call
+				sol.add(add);
 
-				j++;
+				board[j[0]][j[1]] = "o";	//revert to prev state
+				board[b[0]][b[1]] = "o";
+				board[nP[0]][nP[1]] = ".";
+
 			}
-			b++;
 		}
-		return minB;
+
+		if(sol.isEmpty()){
+			return minB;
+		}else{
+			return sol.first();
+		}
+		 
 	
 	}
 	
 	public static int[] game(String[][] board){
 
-		SortedSet<Integer> optSet = new TreeSet<Integer>();
-		int[][] balls = new int[33][2];
-		int i=0;
-		int b=0;
+		ArrayList<int[]> balls = new ArrayList<>();
 		int initialB;
 		int[] opt = new int[2];
-		int temp;
 
-		while(i<board.length){
-			for(int j=0; j<9; j++){
+		for(int i=0; i<board.length; i++){		//find all ball positions
+			for(int j=0; j<board[0].length; j++){
 				if(board[i][j].equals("o")){
-					balls[b][0] = i;
-					balls[b++][1] = j;
+					balls.add(new int[]{i,j});
 				}
 			}
-			i++;
 		}
-		initialB = b;
-		temp = moveBall(balls, board, b, optSet);
-		optSet.add(temp);
-		opt[0] = optSet.first();
+		initialB = balls.size();
+		opt[0] = moveBall(balls, board, initialB);
 		opt[1] = initialB - opt[0];
 		return opt; 
 	}
