@@ -1,3 +1,5 @@
+package Templates;
+
 import java.util.*;
 
 public class HW_Sched {
@@ -28,7 +30,7 @@ public class HW_Sched {
 		//Sort assignments
 		//Order will depend on how compare function is implemented
 		Collections.sort(Assignments, new Assignment());
-		
+
 		// If homeworkPlan[i] has a value -1, it indicates that the 
 		// i'th timeslot in the homeworkPlan is empty
 		//homeworkPlan contains the homework schedule between now and the last deadline
@@ -36,6 +38,24 @@ public class HW_Sched {
 		for (int i=0; i < homeworkPlan.length; ++i) {
 			homeworkPlan[i] = -1;
 		}
+
+		int[] dCounter = new int[lastDeadline+1];
+		int d;
+		int k;
+
+		for(Assignment a: Assignments){
+			d = a.deadline;
+			if(dCounter[d]++ >= d) continue; //if not enough room for assignment before its deadline
+			k = d-1;
+			System.out.println(k);
+			while(k!= -1 && homeworkPlan[k]!=-1){	//find next available slot before deadline
+				k--;
+			}
+			//if(k==-1 && d==lastDeadline) break;
+			if(k==-1) continue;
+			homeworkPlan[k] = a.number;
+
+		} 
 	
 		
 		return homeworkPlan;

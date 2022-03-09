@@ -1,3 +1,5 @@
+package Templates;
+
 import java.util.Arrays;
 
 public class GreedyTester {
