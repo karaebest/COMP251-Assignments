@@ -1,12 +1,11 @@
-import java.io.*;
 import java.util.*;
 
-public class Chaining {
+public class ProofProject_Kara {
     public int m; // number of slots
     public int n; // number of keys in table
     public LinkedList<Integer>[] Table;
 
-    public Chaining(int m){
+    public ProofProject_Kara(int m){
         this.m = m;
         this.Table = new LinkedList<Integer>[m];
         this.load = 0;
@@ -42,7 +41,7 @@ public class Chaining {
     }
 
 
-    //Inserts array of keys
+    //Insert array of keys
     public void insertKeyArray (int[] keyArray){
         for (int key: keyArray) {
             insertKey(key);
