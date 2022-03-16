@@ -1,4 +1,5 @@
-package Templates;
+package ToStudents.ToStudents.Templates;
+
 import java.util.*;
 
 public class A2_Q1 {

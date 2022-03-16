@@ -1,4 +1,4 @@
-package Templates;
+package ToStudents.ToStudents.Templates;
 
 import java.util.*;
 
