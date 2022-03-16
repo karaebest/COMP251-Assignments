@@ -22,6 +22,13 @@ public class ProofProject_Kara {
         n++;         
     }
 
+    //Insert array of keys
+    public void insertKeyArray (int[] keyArray){
+        for (int key: keyArray) {
+            insertKey(key);
+        }
+    }
+
     //Resize table to maintain load factor under 0.5
     public void rehash(int key){
         int oldSize = m;
@@ -40,18 +47,9 @@ public class ProofProject_Kara {
 		}
     }
 
-
-    //Insert array of keys
-    public void insertKeyArray (int[] keyArray){
-        for (int key: keyArray) {
-            insertKey(key);
-        }
-    }
-
-
     //Search for key in table
     public boolean search(int key){
-        int hash = key%m;
+        int hash = key%m;                           
 
         if(Table[hash].isEmpty()) return false;     //if list at hash is empty, search unsuccessful
 
@@ -60,7 +58,6 @@ public class ProofProject_Kara {
         }
 
         return false;                               //if all keys in list examined, search unsuccessful
-
     }
 
 }
