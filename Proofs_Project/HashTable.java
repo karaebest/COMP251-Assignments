@@ -18,7 +18,8 @@ public class HashTable {
         // if((float)(n+1)/m > 0.5){                   //if load factor above 0.5, resize table    
         //     rehash();
         // }
-        int index = key%m;
+        int index = Math.abs(key%m);
+        if(Table[index]==null) Table[index] = new LinkedList<>();
         Table[index].addFirst(key);                 //add key to beginning of linked list
         n++;         
     }
@@ -50,9 +51,9 @@ public class HashTable {
 
     //Search for key in table
     public boolean search(int key){
-        int hash = key%m;                           
+        int hash = Math.abs(key%m);                           
 
-        if(Table[hash].isEmpty()) return false;     //if list at hash is empty, search unsuccessful
+        if(Table[hash]==null || Table[hash].isEmpty()) return false;     //if list at hash is empty or null, search unsuccessful
 
         for(Integer k: Table[hash]){
             if(k.intValue()==key) return true;      

@@ -2,5 +2,9 @@
     "java.project.sourcePaths": [
         "Proofs_Project",
         "Assignment 2"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\HP User\\Downloads\\Java External Libraries\\xchart-3.8.1\\xchart-3.8.1.jar"
     ]
 }

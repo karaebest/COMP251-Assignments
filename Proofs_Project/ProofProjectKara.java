@@ -15,8 +15,9 @@ public class ProofProjectKara {
 
     // generates a random nonzero integer
     public static int generateRandomKey() {
-        Random rand = new Random();        
-        return rand.nextInt();
+        Random rand = new Random(); 
+        int k = rand.nextInt();
+        return k;
     }
 
     public static HashTable generateRandomTable(int n){ //n is number of keys
@@ -24,7 +25,7 @@ public class ProofProjectKara {
         HashTable hash = new HashTable(n);
         int[] keys = new int[n];
         Random rand = new Random();
-        int grabKey = rand.nextInt(n);
+        int grabKey = rand.nextInt(n);			//to ensure saved key is randomly selected			
 
 
         for(int i=0; i<n; i++){
@@ -36,7 +37,7 @@ public class ProofProjectKara {
         return hash;
     }
 
-    // runs the Bellman-Ford algoritm on a random graph
+    // runs the Bellman-Ford algorithm on a random graph
     // returns the time of execution in microseconds
     public static double runSearch(int key, HashTable table) {
 
@@ -60,7 +61,8 @@ public class ProofProjectKara {
         HashTable test;
         int numKeys = 100;
 
-        for (int i=0; i<samples; i++) {
+        for (int i=0; i<samples+50; i++) {
+        	if(i<50) continue;
             numKeys += 100;        //increase number of keys by 100 for each sample
             test = generateRandomTable(numKeys);
             if(i%2==0){
@@ -77,9 +79,9 @@ public class ProofProjectKara {
         
 
         //add reference O(n)
-        chart.addSeries("Input Size n", inputSize, inputSize).setMarker(SeriesMarkers.NONE); 
+        //chart.addSeries("Input Size n", inputSize, inputSize).setMarker(SeriesMarkers.NONE); 
         // display chart
-        //new SwingWrapper<>(chart).displayChart();
+        new SwingWrapper<>(chart).displayChart();
         
         // save chart
         try {
