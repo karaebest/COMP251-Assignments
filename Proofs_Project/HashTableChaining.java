@@ -13,21 +13,20 @@ public class Chaining {
         this.n = 0;
     }
 
-
-
-    //inserts key in table, calls rehash if load factor over 0.5
+    //Insert key in table
     public void insertKey(Integer key){
-        if((float)(n+1)/m > 0.5){      
+        if((float)(n+1)/m > 0.5){                   //if load factor above 0.5, resize table    
             rehash();
         }
         int index = key%m;
-        Table[index].addFirst(key);     //adds all keys to front of list to be compatible with successful search proof
+        Table[index].addFirst(key);                 //add key to beginning of linked list
         n++;         
     }
 
+    //Resize table to maintain load factor under 0.5
     public void rehash(int key){
         int oldSize = m;
-		m = 2*m;            //double size of table
+		m = 2*m;                                    //double size of table
 		n = 0;       
 		LinkedList<Integer>[] temp = this.Table;
 		
@@ -35,7 +34,7 @@ public class Chaining {
 
 		for(int i=0; i<oldSize; i++) {
 			if(!temp[i].isEmpty()) {
-				for(Integer k: temp[i]){        //insert all keys into new table
+				for(Integer k: temp[i]){            //insert all keys into new table
                     insertKey(k);
                 }
 			}
@@ -43,10 +42,26 @@ public class Chaining {
     }
 
 
-    /**Sequentially inserts a list of keys into the HashTable. Outputs total number of collisions */
+    //Inserts array of keys
     public void insertKeyArray (int[] keyArray){
         for (int key: keyArray) {
             insertKey(key);
         }
     }
+
+
+    //Search for key in table
+    public boolean search(int key){
+        int hash = key%m;
+
+        if(Table[hash].isEmpty()) return false;     //if list at hash is empty, search unsuccessful
+
+        for(Integer k: Table[hash]){
+            if(k.intValue()==key) return true;      
+        }
+
+        return false;                               //if all keys in list examined, search unsuccessful
+
+    }
+
 }
