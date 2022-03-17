@@ -58,12 +58,10 @@ public class ProofProjectKara {
         double[] execution_times = new double[samples];
         int key;
         HashTable test;
-        int numKeys = 1;
-        int[] k = new int[samples];
+        int numKeys = 0;
 
         for (int i=0; i<samples; i++) {     //trial and error, 500 iterations is what it takes to even out the optimization
-        	//if(i>=samples) continue;
-            numKeys += 2;        //increase number of keys by 100 for each sample
+            numKeys += 3;        //increase number of keys by 100 for each sample
             test = generateRandomTable(numKeys);
             if(i%2==0){
                 key = keyInTable;
@@ -72,14 +70,9 @@ public class ProofProjectKara {
             }
             execution_times[i] = runSearch(key, test);
             inputSize[i] = numKeys;
-            k[i] = key;
         }
 
-        // for(int j=0; j<execution_times.length; j++){
-        //     if(execution_times[j]>5){
-        //         System.out.println("i: "+ j+" key:"+ k[j]+ " time:"+ execution_times[j]+ " size:"+ inputSize[j]);
-        //     }
-        // }
+        // create subarrays to omit loop iterations that were not optimized
         double[] exec = Arrays.copyOfRange(execution_times, 3, 95);
         double[] size = Arrays.copyOfRange(inputSize, 3, 95);
         // create chart
@@ -90,7 +83,7 @@ public class ProofProjectKara {
             ones[d]=1;
         }
         //add reference O(n)
-        chart.addSeries("O(1)", size, ones).setMarker(SeriesMarkers.NONE); 
+        chart.addSeries("1", size, ones).setMarker(SeriesMarkers.NONE); 
         // display chart
         new SwingWrapper<>(chart).displayChart();
         
