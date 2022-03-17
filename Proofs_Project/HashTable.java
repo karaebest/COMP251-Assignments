@@ -5,23 +5,57 @@ import java.util.*;
 public class HashTable {
     public int m; // number of slots
     public int n; // number of keys in table
-    public LinkedList<Integer>[] Table;
+    public ArrayList<LinkedList<Integer>> Table;
 
     public HashTable(int n){        //takes in number of keys so that can make sure n is always proportional to m
-        this.m = n*2;
-        this.Table = (LinkedList<Integer>[])new LinkedList<?>[m];
+        this.m = 0;
+        int temp = 2*n;
+		int notPrime=0;
+		while(m == 0) {             //find prime size larger than 2*n
+			for(int i=temp-1;i>1; i--) {
+				if(temp%i == 0) {
+					notPrime++; 
+				}
+			}
+			if(notPrime == 0) {
+				m = temp;
+			}else {
+				temp++;
+				notPrime = 0;
+			}
+		}
+        this.Table = new ArrayList<LinkedList<Integer>>(m);
         this.n = 0;
+        for(int i=0; i<m; i++){
+            Table.add(new LinkedList<>());
+        }
     }
+    // public int m; // number of SLOTS
+    // int w;
+    // int r;
+    // public ArrayList<LinkedList<Integer>>  Table;
+
+    // public HashTable(int w){
+    //     this.w = w;
+    //     this.r = (int) (w-1)/2 +1;
+    //     this.m = power2(r);
+    //     this.Table = new ArrayList<LinkedList<Integer>>(m);
+    //     for(int i=0; i<m; i++){
+    //         Table.add(new LinkedList<>());
+    //     }
+
+    //  }
+    // /** Calculate 2^w*/
+    //  public static int power2(int w) {
+    //     return (int) Math.pow(2, w);
+    //  }
+    
 
     //Insert key in table
     public void insertKey(Integer key){
-        // if((float)(n+1)/m > 0.5){                   //if load factor above 0.5, resize table    
-        //     rehash();
-        // }
+       
         int index = Math.abs(key%m);
-        if(Table[index]==null) Table[index] = new LinkedList<>();
-        Table[index].addFirst(key);                 //add key to beginning of linked list
-        n++;         
+        Table.get(index).addFirst(key);                 //add key to beginning of linked list
     }
 
     //Insert array of keys
@@ -31,31 +65,15 @@ public class HashTable {
         }
     }
 
-    //Resize table to maintain load factor under 0.5
-    // public void rehash(){
-    //     int oldSize = m;
-	// 	m = 2*m;                                    //double size of table
-	// 	n = 0;       
-	// 	LinkedList<Integer>[] temp = this.Table;
-		
-    //     this.Table = (LinkedList<Integer>[])new LinkedList<?>[m];    //create new table double the size
-
-	// 	for(int i=0; i<oldSize; i++) {
-	// 		if(!temp[i].isEmpty()) {
-	// 			for(Integer k: temp[i]){            //insert all keys into new table
-    //                 insertKey(k);
-    //             }
-	// 		}
-	// 	}
-    // }
+    
 
     //Search for key in table
     public boolean search(int key){
         int hash = Math.abs(key%m);                           
 
-        if(Table[hash]==null || Table[hash].isEmpty()) return false;     //if list at hash is empty or null, search unsuccessful
+        if(Table.get(hash).isEmpty()) return false;     //if list at hash is empty or null, search unsuccessful
 
-        for(Integer k: Table[hash]){
+        for(Integer k: Table.get(hash)){
             if(k.intValue()==key) return true;      
         }
 

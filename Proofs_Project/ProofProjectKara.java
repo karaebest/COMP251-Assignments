@@ -16,7 +16,7 @@ public class ProofProjectKara {
     // generates a random nonzero integer
     public static int generateRandomKey() {
         Random rand = new Random(); 
-        int k = rand.nextInt();
+        int k = rand.nextInt(500);
         return k;
     }
 
@@ -37,7 +37,6 @@ public class ProofProjectKara {
         return hash;
     }
 
-    // runs the Bellman-Ford algorithm on a random graph
     // returns the time of execution in microseconds
     public static double runSearch(int key, HashTable table) {
 
@@ -54,32 +53,44 @@ public class ProofProjectKara {
     // runs the Bellman-Ford algorithm on a series of samples and outputs a chart of the runtime
     public static void main(String[] args) {
         // number of sample executions
-        int samples = 500;
+        int samples = 100;
         double[] inputSize = new double[samples];
         double[] execution_times = new double[samples];
         int key;
         HashTable test;
-        int numKeys = 100;
+        int numKeys = 1;
+        int[] k = new int[samples];
 
-        for (int i=0; i<samples+50; i++) {
-        	if(i<50) continue;
-            numKeys += 100;        //increase number of keys by 100 for each sample
+        for (int i=0; i<samples; i++) {     //trial and error, 500 iterations is what it takes to even out the optimization
+        	//if(i>=samples) continue;
+            numKeys += 2;        //increase number of keys by 100 for each sample
             test = generateRandomTable(numKeys);
             if(i%2==0){
-                key = generateRandomKey();
-            }else{
                 key = keyInTable;
+            }else{
+                key = generateRandomKey();
             }
             execution_times[i] = runSearch(key, test);
             inputSize[i] = numKeys;
+            k[i] = key;
         }
 
+        // for(int j=0; j<execution_times.length; j++){
+        //     if(execution_times[j]>5){
+        //         System.out.println("i: "+ j+" key:"+ k[j]+ " time:"+ execution_times[j]+ " size:"+ inputSize[j]);
+        //     }
+        // }
+        double[] exec = Arrays.copyOfRange(execution_times, 2, execution_times.length);
+        double[] size = Arrays.copyOfRange(inputSize, 2, inputSize.length);
         // create chart
-        XYChart chart = QuickChart.getChart("Execution Time of Search", "Number of Keys", "Execution Time (us)", "Search Runtime", inputSize, execution_times);
+        XYChart chart = QuickChart.getChart("Execution Time of Search", "Number of Keys", "Execution Time (us)", "Search Runtime", size, exec);
         
-
+        double[] ones = new double[samples];
+        for(int d=0; d<ones.length; d++){
+            ones[d]=1;
+        }
         //add reference O(n)
-        //chart.addSeries("Input Size n", inputSize, inputSize).setMarker(SeriesMarkers.NONE); 
+        chart.addSeries("Input Size n", inputSize, ones).setMarker(SeriesMarkers.NONE); 
         // display chart
         new SwingWrapper<>(chart).displayChart();
         
