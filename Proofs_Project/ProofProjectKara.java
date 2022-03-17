@@ -9,28 +9,31 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 
 public class ProofProjectKara {
     
-    public static int keyInTable;  //for half the samples ensure it is successful search
+    public static int keyInTable; 
     // THE FOLLOWING ARE HELPER METHODS TO GENERATE RANDOM INSTANCES OF THE PROBLEM: 
 
 
-    // generates a random nonzero integer
+    // generates a random integer between 0(inclusive) and 500(exclusive)
     public static int generateRandomKey() {
         Random rand = new Random(); 
         int k = rand.nextInt(500);
         return k;
     }
 
-    public static HashTable generateRandomTable(int n){ //n is number of keys
+    //generates a hash table filled with n random keys
+    public static HashTable generateRandomTable(int n){ 
 
         HashTable hash = new HashTable(n);
         int[] keys = new int[n];
+        //randomly select an index from the array of keys
         Random rand = new Random();
-        int grabKey = rand.nextInt(n);			//to ensure saved key is randomly selected			
+        int grabKey = rand.nextInt(n);						
 
 
         for(int i=0; i<n; i++){
             keys[i] = generateRandomKey();
-            if(grabKey==i)  keyInTable = keys[i];       //to ensure successful search at least 1/2 of the time: save random key from table in static variable
+            //store the key at the randomly selected index to ensure half of the searches are successful when timing the samples
+            if(grabKey==i)  keyInTable = keys[i];       
         }
 
         hash.insertKeyArray(keys);
@@ -50,7 +53,7 @@ public class ProofProjectKara {
     }
 
 
-    // runs the Bellman-Ford algorithm on a series of samples and outputs a chart of the runtime
+    // runs the search algorithm on a series of samples and outputs a chart of the runtime
     public static void main(String[] args) {
         // number of sample executions
         int samples = 100;
@@ -60,12 +63,16 @@ public class ProofProjectKara {
         HashTable test;
         int numKeys = 0;
 
-        for (int i=0; i<samples; i++) {     //trial and error, 500 iterations is what it takes to even out the optimization
-            numKeys += 3;        //increase number of keys by 100 for each sample
+        for (int i=0; i<samples; i++) {
+            //increase number of keys by 3 for each sample     
+            numKeys += 3;                           
             test = generateRandomTable(numKeys);
-            if(i%2==0){
+            if(i%2==0){  
+                //search for a key that is known to be in the table test 
+                //to ensure successful search for at least half the timed searches                           
                 key = keyInTable;
             }else{
+                //search for randomly generated key for the other half
                 key = generateRandomKey();
             }
             execution_times[i] = runSearch(key, test);
@@ -82,7 +89,7 @@ public class ProofProjectKara {
         for(int d=0; d<ones.length; d++){
             ones[d]=1;
         }
-        //add reference O(n)
+        //add reference O(1)
         chart.addSeries("1", size, ones).setMarker(SeriesMarkers.NONE); 
         // display chart
         new SwingWrapper<>(chart).displayChart();
