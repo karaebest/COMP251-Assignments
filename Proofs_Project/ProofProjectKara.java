@@ -80,17 +80,17 @@ public class ProofProjectKara {
         //         System.out.println("i: "+ j+" key:"+ k[j]+ " time:"+ execution_times[j]+ " size:"+ inputSize[j]);
         //     }
         // }
-        double[] exec = Arrays.copyOfRange(execution_times, 2, execution_times.length);
-        double[] size = Arrays.copyOfRange(inputSize, 2, inputSize.length);
+        double[] exec = Arrays.copyOfRange(execution_times, 3, 95);
+        double[] size = Arrays.copyOfRange(inputSize, 3, 95);
         // create chart
         XYChart chart = QuickChart.getChart("Execution Time of Search", "Number of Keys", "Execution Time (us)", "Search Runtime", size, exec);
         
-        double[] ones = new double[samples];
+        double[] ones = new double[92];
         for(int d=0; d<ones.length; d++){
             ones[d]=1;
         }
         //add reference O(n)
-        chart.addSeries("Input Size n", inputSize, ones).setMarker(SeriesMarkers.NONE); 
+        chart.addSeries("O(1)", size, ones).setMarker(SeriesMarkers.NONE); 
         // display chart
         new SwingWrapper<>(chart).displayChart();
         
