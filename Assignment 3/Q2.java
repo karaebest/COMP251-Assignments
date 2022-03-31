@@ -1,94 +1,131 @@
 import java.util.*;
 
-import javax.swing.text.html.HTMLDocument.RunElement;
-
 
 public class Q2 {
 	
 	public static int rings(Hashtable<Integer, ArrayList<Integer>> graph, int[]location) {
 
-		return jumps(TS(graph), location);
-	}
+		int[] in = new int[graph.size()];
+		ArrayDeque<Integer> q1 = new ArrayDeque<Integer>();
+		ArrayDeque<Integer> q2 = new ArrayDeque<Integer>();
+		ArrayList<Integer> keys = new ArrayList<>();
+		int sum1 = 0;
+		int sum2 = 0;
+		
+		keys.addAll(graph.keySet());
 
-	public static int[][] TS(Hashtable<Integer, ArrayList<Integer>> graph){	//returns array of arrays of [sorted keys, in degrees, out degrees]
-
-		int[] inT = new int[graph.size()+1];
-		int[] outT = new int[graph.size()+1];
-
-		int[] inTemp = new int[graph.size()+1];	
-		Queue<Integer> q = new ArrayDeque<Integer>();
-		ArrayList<Integer> f = new ArrayList<>();
-		f.addAll(graph.keySet());
-		int[] sorted = new int[graph.size()];
-		int[][] all = new int[3][graph.size()];
-
-		for(Integer k: f){
+		for(Integer k: keys){				//compute all in degrees
 			for(Integer d: graph.get(k)){
-				inT[d]++;
-				inTemp[d]++;
-				outT[k]++;
+				in[d]++;
 			}
 		}
-		for(Integer k: f){
-			if(inT[k]==0) q.add(k);
+		for(Integer k: keys){				//find all sources and add to queues and increase sums
+			if(in[k]==0){
+				if(location[k]==1){
+					q1.add(k);
+					in[k] = -1;
+					sum1 = sum1 + 1 + graph.get(k).size();
+				}else{
+					q2.add(k);
+					in[k] = -1;
+					sum2 = sum2 + 1 + graph.get(k).size();
+				}
+			}
 		}
 		
-		int i = 0;
-		while(!q.isEmpty()){
-			Integer k1 = q.remove();
-			sorted[i++] = k1;
-			for(Integer d1: graph.get(k1)){
-				if(--inTemp[d1]==0) q.add(d1);
+		if(sum1<sum2){
+			return TS(graph, q1, q2, in, location, 2, 0);
+		}
+		if(sum1>sum2){
+			return TS(graph, q1, q2, in, location, 1, 0);
+		}else{
+			int[] inT = in.clone();
+			
+			ArrayDeque<Integer> q1T = new ArrayDeque<Integer>();
+			for(Integer k: q1){
+				q1T.add(k);
 			}
+			ArrayDeque<Integer> q2T = new ArrayDeque<Integer>();
+			for(Integer d: q2){
+				q2T.add(d);
+			}
+			int j1 = TS(graph, q1T, q2T, inT, location, 1, 0);
+			int j2 = TS(graph, q1, q2, in, location, 2, 0);
+
+			return Math.min(j1, j2);
 		}
-		int[] in = new int[graph.size()];
-		int[] out = new int[graph.size()];
-		for(i=0; i<sorted.length; i++){		
-			in[i] = inT[sorted[i]];
-			out[i] = outT[sorted[i]];
-		}
-
-		all[0] = sorted;
-		all[1] = in;
-		all[2] = out;
-
-		return all;
-
+		
 	}
 
-	public static int jumps(int[][] info, int[] location){
+	public static int TS(Hashtable<Integer, ArrayList<Integer>> g, Queue<Integer> q1, Queue<Integer> q2, int[] in, int[] loc, int p, int j){
+		
+		Integer k;
+		if(p==1){
+			while(!q1.isEmpty()){
+				k = q1.remove();
+				for(Integer d: g.get(k)){
+					if(in[d] != -1) in[d]--;
+					if(in[d]!=-1 && in[d]==0){
+						if(loc[d]==1){
+							q1.add(d);
+						}else{
+							q2.add(d);
+						}
+						in[d] = -1;
+					}
+				}
+			}
+			p = 2;
+		}else{
+			while(!q2.isEmpty()){
+				k = q2.remove();
+				for(Integer d: g.get(k)){
+					if(in[d] != -1) in[d]--;
+					if(in[d]!= -1 && in[d]==0){
+						if(loc[d]==1){
+							q1.add(d);
+						}else{
+							q2.add(d);
+						}
+						in[d] = -1;
 
-		return 0;
+					}
+				}
+			}
+			p = 1;
+		}
+
+		if(q1.isEmpty() && q2.isEmpty()) return j;
+		j++;
+		return TS(g, q1, q2, in, loc, p, j);	//make jump
 	}
 
 	public static void main(String[] args) {
-		//int[] location = new int[]{2,1,2,2,1};
+
 		Hashtable<Integer, ArrayList<Integer>> g = new Hashtable<Integer, ArrayList<Integer>>();
-		Integer one = 1;
-		Integer two = 2;
-		Integer th = 3;
-		Integer fo = 4;
-		Integer five = 5;
+		Integer one = 0;
+		Integer two = 1;
+		Integer th = 2;
+		Integer fo = 3;
+		Integer five = 4;
 	
 		g.put(one, new ArrayList<>());
 		ArrayList<Integer> a = new ArrayList<>();
-		a.add(one);
-		g.put(2, a);
-		ArrayList<Integer> b = (ArrayList<Integer>) a.clone();
-		b.add(two);
+		a.add(five);
+		g.put(two, a);
+		ArrayList<Integer> b = new ArrayList<>();
+		b.add(fo);
 		g.put(th, b);
-		ArrayList<Integer> c = (ArrayList<Integer>) b.clone();
-		c.add(th);
+		ArrayList<Integer> c = new ArrayList<>();
+		//c.add(th);
 		g.put(fo, c);
-		ArrayList<Integer> d = (ArrayList<Integer>) c.clone();
-		d.add(fo);
+		ArrayList<Integer> d = new ArrayList<>();
+		d.add(one);
 		g.put(five, d);
-		
-		int[][] result = TS(g);
 
-		for(int i=0; i<5; i++){
-			System.out.println("key:"+result[0][i]+ " in:"+result[1][i]+ " out:"+ result[2][i]);
-		}
+		int[] location = new int[]{1,1,2,2,2};
+		
+		System.out.println(rings(g, location));
 		
 	}
 
