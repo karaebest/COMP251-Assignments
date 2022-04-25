@@ -76,7 +76,6 @@ public class A2_Q1 {
 
 				balls.clear();	//take step to new state
 				balls.addAll(positions(oldBalls, nP, j, b));
-				//balls = (ArrayList<int[]>) positions(oldBalls, nP, j, b).clone();
 
 				bo[j[0]][j[1]] = ".";	
 				bo[b[0]][b[1]] = ".";

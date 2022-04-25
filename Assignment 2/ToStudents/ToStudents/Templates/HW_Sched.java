@@ -51,7 +51,6 @@ public class HW_Sched {
 			while(k!= -1 && homeworkPlan[k]!=-1){	//find next available slot before deadline
 				k--;
 			}
-			//if(k==-1 && d==lastDeadline) break;
 			if(k==-1) continue;
 			homeworkPlan[k] = a.number;
 
