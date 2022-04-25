@@ -69,30 +69,13 @@ public class FordFulkerson {
 
 		p = pathDFS(graph.getSource(), graph.getDestination(), gf);
 
-		//System.out.print("source:" + graph.getSource() + " dest:" + graph.getDestination());
-
 		while((p==null || !p.isEmpty())){
-			// System.out.println("new path:");
-			// for(int l=0; l<p.size(); l++){
-			// 	System.out.println(p.get(l));
-			// }
-			// System.out.println("end path:");
-
-
-			// all = new ArrayList<>();
-			// edg = new ArrayList<Edge>();
-			//beta = findB(p, gf, graph, first, all, edg);
 
 			beta = findB(p, gf, graph);
 			if(beta==-1) break;
 			maxFlow += beta;
 
 			gf = new WGraph(augment(beta, p, gf, graph, cap));
-
-			// System.out.println("flow="+maxFlow);
-			// System.out.print("current residual:\n"+gf.toString() + "\n end res\n");
-			// System.out.print("current graph:\n"+ graph.toString()+ "\n end graph\n");
-
 			p = pathDFS(graph.getSource(), graph.getDestination(), gf);
 		}
 

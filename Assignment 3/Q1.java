@@ -50,40 +50,33 @@ public class Q1 {
 				if(jail[u.x+1][u.y][u.z].contains(w)) return u.d+1;
 				jail[u.x+1][u.y][u.z] = "#";
 				q.add(new Q1(new int[]{u.x+1, u.y, u.z}, u.d+1));
-				//System.out.println("down x:"+(u.x+1) + " y:"+u.y+ " z:"+ u.z);		
 			}
 			if(u.x-1>=0 && !jail[u.x-1][u.y][u.z].contains("#")){	//up
 				if(jail[u.x-1][u.y][u.z].contains(w)) return u.d+1;
 				jail[u.x-1][u.y][u.z] = "#";
 				q.add(new Q1(new int[]{u.x-1, u.y, u.z}, u.d+1));
-				//System.out.println("up x:"+(u.x-1) + " y:"+u.y+ " z:"+ u.z);		
 			}
 			if(u.y+1<r && !jail[u.x][u.y+1][u.z].contains("#")){	//front
 				if(jail[u.x][u.y+1][u.z].contains(w)) return u.d+1;
 				jail[u.x][u.y+1][u.z] = "#";
 				q.add(new Q1(new int[]{u.x, u.y+1, u.z}, u.d+1));
-				//System.out.println("front x:"+u.x + " y:"+(u.y+1)+ " z:"+ u.z);		
 			}
 			if(u.y-1>=0 && !jail[u.x][u.y-1][u.z].contains("#")){	//back
 				if(jail[u.x][u.y-1][u.z].contains(w)) return u.d+1;
 				jail[u.x][u.y-1][u.z] = "#";
 				q.add(new Q1(new int[]{u.x, u.y-1, u.z}, u.d+1));
-				//System.out.println(" back x:"+u.x + " y:"+(u.y-1)+ " z:"+ u.z);		
 			}
 			if(u.z+1<c && !jail[u.x][u.y][u.z+1].contains("#")){	//right
 				if(jail[u.x][u.y][u.z+1].contains(w)) return u.d+1;
 				jail[u.x][u.y][u.z+1] = "#";
 				q.add(new Q1(new int[]{u.x, u.y, u.z+1}, u.d+1));
-				//System.out.println("right x:"+u.x + " y:"+(u.y)+ " z:"+ (u.z+1));		
 			}
 			if(u.z-1>=0 && !jail[u.x][u.y][u.z-1].contains("#")){	//left
 				if(jail[u.x][u.y][u.z-1].contains(w)) return u.d+1;
 				jail[u.x][u.y][u.z-1] = "#";
 				q.add(new Q1(new int[]{u.x, u.y, u.z-1}, u.d+1));
-				//System.out.println("left x:"+u.x + " y:"+(u.y)+ " z:"+ (u.z-1));		
 			}
 			k++;
-			//System.out.println(k);
 		}
 		return -1;
 	}
